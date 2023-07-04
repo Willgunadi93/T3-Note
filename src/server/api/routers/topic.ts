@@ -1,17 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { z } from "zod";
-import {
-  createTRPCRouter,
-  protectedProcedure,
-} from "~/server/api/trpc";
+
+import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const topicRouter = createTRPCRouter({
-  getAll: protectedProcedure
-  .query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.topic.findMany({
-      where : {
+      where: {
         userId: ctx.session.user.id,
       },
     });
@@ -19,12 +13,14 @@ export const topicRouter = createTRPCRouter({
 
   create: protectedProcedure
     .input(z.object({ title: z.string() }))
-    .mutation(({ctx, input}) => {
+    .mutation(({ ctx, input }) => {
+
+      console.log('input: ', input);
       return ctx.prisma.topic.create({
         data: {
           title: input.title,
           userId: ctx.session.user.id,
-        }
-      })
-    })
+        },
+      });
+    }),
 });
